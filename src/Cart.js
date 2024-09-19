@@ -1,10 +1,11 @@
 // Cart.js
 import { useState, useEffect } from "react";
+import { getProducts } from "./api/products/product";
 
-
-
-const Cart = ({ cartItems, removeFromCart }) =>{
+const Cart = ({ cartItems, removeFromCart }) => {
     const [loading, setLoading] = useState(false);
+    const [cartData, setCartData] = useState([]);
+
     const fetchCategoryItems = async () => {
         setLoading(true);
         try {
@@ -14,43 +15,44 @@ const Cart = ({ cartItems, removeFromCart }) =>{
                     headers: {
                         projectId: "akdf9k0yj45r",
                     },
-                    body: JSON.stringify({
-
-                    })
                 }
             );
             const data = await response.json();
-            setLoading(false);
-            return data.data;
+            setCartData(data.data || []);
         } catch (error) {
-            setLoading(false);
             console.error("Failed to fetch cart items:", error);
-            return [];
+        } finally {
+            setLoading(false);
         }
     };
-    fetchCategoryItems();
-    // useEffect(() => {
-    //     if (menDropdownOpen && menItems.length === 0) {
-    //         fetchCategoryItems().then((items) => {
-    //             setMenItems(items);
-    //         });
-    //     }
-    //     if (womenDropdownOpen && womenItems.length === 0) {
-    //         fetchCategoryItems().then((items) => {
-    //             setWomenItems(items);
-    //         });
-    //     }
-    // }, []);
 
-    api.fetch("").then
+    useEffect(() => {
+        fetchCategoryItems();
+    }, []);
+
+    useEffect(() => {
+        // Example usage of getProducts, handle the promise
+        const fetchProducts = async () => {
+            try {
+                const products = await getProducts();
+                console.log(products);
+            } catch (error) {
+                console.error("Failed to fetch products:", error);
+            }
+        };
+        fetchProducts();
+    }, []);
+
     return (
         <div className="container mx-auto p-4 flex flex-col min-h-screen">
             <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
-            {cartItems.length === 0 ? (
+            {loading ? (
+                <p>Loading...</p>
+            ) : cartData.length === 0 ? (
                 <p>Your cart is empty</p>
             ) : (
                 <div>
-                    {cartItems.map((item) => (
+                    {cartData.map((item) => (
                         <div key={item._id} className="flex items-center justify-between mb-4">
                             <div className="flex items-center">
                                 <img src={item.displayImage} alt={item.name} className="w-16 h-16 mr-4" />
