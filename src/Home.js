@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductList from './Products'; // Ensure the path is correct
+import ProductList from './Products';
 import "./index.css";
 
 const Home = ({ products, isLoading, error }) => {

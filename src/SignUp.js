@@ -11,7 +11,7 @@ const SignUp = ({ addUser }) => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    const projectID = "f104bi07c490"; // Replace with your actual project ID
+    const projectID = "f104bi07c490";
 
     const userData = {
       name: name,
@@ -40,6 +40,7 @@ const SignUp = ({ addUser }) => {
   return (
       <div className="flex flex-col md:flex-row justify-center items-center min-h-screen bg-gray-100">
         <div className="flex-1 flex justify-center items-center p-6">
+
           <div className="relative w-full max-w-md">
             <h1 className="text-center font-bold text-2xl mb-4">Welcome to the world of Bewakoof!</h1>
             <img
@@ -51,6 +52,7 @@ const SignUp = ({ addUser }) => {
         </div>
         <div className="flex-1 max-w-md w-full bg-white shadow-lg rounded-lg p-8 m-4">
           <h2 className="text-3xl font-bold text-center mb-8">Sign Up</h2>
+
           <form onSubmit={handleSignUp} className="space-y-6">
             <div className="form-group">
               <label htmlFor="name" className="block mb-2 text-lg">

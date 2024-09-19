@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Header from "./Header";
@@ -6,7 +8,10 @@ import Login from "./Login";
 import SignUp from "./SignUp";
 import ProductDetail from "./ProductDetail";
 import { AuthProvider } from "./AuthContext";
+import Cart from "./Cart";
 import "./index.css";
+import Footer from "./Footer";
+import { getProducts } from "./api/products/product";
 
 const App = () => {
     const [users, setUsers] = useState([]);
@@ -14,21 +19,26 @@ const App = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
 
     const addUser = (newUser) => {
         setUsers([...users, newUser]);
     };
 
+    const addToCart = (product) => {
+        setCartItems([...cartItems, product]);
+    };
+
+    const removeFromCart = (product) => {
+        setCartItems(cartItems.filter((item) => item._id !== product._id));
+    };
+
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch("https://academics.newtonschool.co/api/v1/ecommerce/clothes/products", {
-                    headers: {
-                        'projectId': 'f104bi07c490'
-                    }
-                });
-                const data = await response.json();
-                setProducts(data.data);
+                const data = await getProducts();
+                console.log(data);
+                setProducts(data);
                 setIsLoading(false);
             } catch (error) {
                 setError(error);
@@ -40,9 +50,14 @@ const App = () => {
 
     const routes = createBrowserRouter([
         {
-            path:"/",
-            element:<Header/>,
-            children:[
+            path: "/",
+            element: (
+                <>
+                    <Header />
+                    <Footer />
+                </>
+            ),
+            children: [
                 {
                     path: "/",
                     element: <Home products={products} isLoading={isLoading} error={error} />,
@@ -57,17 +72,19 @@ const App = () => {
                 },
                 {
                     path: "/product/:productId",
-                    element: <ProductDetail products={products} />,
-                }
-            ]
-        }
-
+                    element: <ProductDetail products={products} addToCart={addToCart} />,
+                },
+                {
+                    path: "/cart",
+                    element: <Cart cartItems={cartItems} removeFromCart={removeFromCart} />,
+                },
+            ],
+        },
     ]);
 
     return (
         <AuthProvider value={{ currentUser, setUser: setCurrentUser }}>
-            <RouterProvider router={routes}/>
-
+            <RouterProvider router={routes} />
         </AuthProvider>
     );
 };
